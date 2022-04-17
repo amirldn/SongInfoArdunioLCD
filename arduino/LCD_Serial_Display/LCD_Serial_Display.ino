@@ -39,21 +39,29 @@ void setup() {
   Serial.println("Starting SongInfoArduino...");
 }
 
+void nowPlaying(String serialIn) {
+  // Displays the track name, artist name and current playback time
+  lcd.setCursor(0, 0);
+  // lcd.autoscroll();
+  Serial.print("index of NAME: ");
+  Serial.println(serialIn.indexOf("NAME:"));
+  lcd.print(serialIn.substring(5, serialIn.length() - 1));
+}
+
 void loop() {
   if (Serial.available()){
     String serialIn = Serial.readString();
+
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.noAutoscroll();
-    Serial.print("index of NAME: ");
-    Serial.println(serialIn.indexOf("NAME:"));
+
+     //  use the indexOf stuff to find out locations of stuff and split it out using substring (from, to)
+
+    // CASES
     // Check if serialIn contains substring NAME:
       if(serialIn.indexOf("NAME:") >= 0){
-        // Print the song name
-        lcd.print(serialIn.substring(5, serialIn.length() - 1));
-        // lcd.print(serialIn.substring(5));
-
-        //  use the indexOf stuff to find out locations of stuff and split it out using substring (from, to)
+        nowPlaying(serialIn);
       }
       else {
       // Print a message to the LCD.
@@ -64,24 +72,16 @@ void loop() {
     }
   }
 
-
-
-  // // set the cursor to column 0, line 1
-  // // (note: line 1 is the second row, since counting begins with 0):
-  // lcd.setCursor(0, 1);
-  // // print the number of seconds since reset:
-  // lcd.print(millis() / 1000);
-  //   lcd.setCursor(5, 1);
-  // // print the number of seconds since reset:
-  // lcd.print(millis() / 10);
-
-
 /* NOTES:
 Cases:
 1. Nothing playing, serial output : NONE, LCD: show time & date
-2. Music playing, serial output: NAME:<songname> ARTIST:<artistname> TIME:<timeplaying>
-3. 30 Secs left of current song, serial output 1: NEXTUP:<songname> - <artistname>, LCD row 0: NEXT UP, row1: Song - Artist Name
+2. Music playing, serial output: PLAYING NAME:<songname> ARTIST:<artistname> TIME:<timeplaying>
+3. 30 Secs left of current song, serial output 1: NEXTUP NAME:<songname> - <artistname>, LCD row 0: NEXT UP, row1: Song - Artist Name
 4. 25 secs left of current song, go back to CASE 2
-5. Error with API, serial output: ERROR:<errorcode>, LCD: show error
+5. Error with API, serial output: ERROR ISSUE:<errorcode>, LCD: show error
+
+TODO:
+1. Figure out why autoscroll does not work (check the length of something and then start printing/adding the chars 1 by 1?)
+2. Make a mode variable and use that for the switch statemenet
 
 */
