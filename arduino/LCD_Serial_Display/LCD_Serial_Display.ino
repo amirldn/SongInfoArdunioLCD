@@ -39,8 +39,14 @@ void setup() {
   Serial.println("Starting SongInfoArduino...");
 }
 
+// Create functions for each 'mode' that the LCD will display
 void notPlaying(String serialIn) {
-  lcd.print("No song playing");
+  lcd.setCursor(0, 0);
+  if (serialIn.indexOf("TIME:") == -1) {
+    error(serialIn, "TIME = -1");
+  }
+  lcd.print(serialIn.substring(7, serialIn.indexOf("DATE:")));
+  lcd.print((serialIn.substring(serialIn.indexOf("DATE:") + 5, serialIn.length() - 1)));
   lcd.setCursor(0, 1);
   lcd.print("(C) amirldn");
 }
@@ -56,17 +62,29 @@ void nowPlaying(String serialIn) {
     error(serialIn, "NAME = -1");
   }
   else {
-    lcd.print(serialIn.substring(7, serialIn.length() - 1));
+    lcd.print(serialIn.substring(7, serialIn.indexOf("ARTIST:")));
   }
+  lcd.setCursor(0, 1);
+  lcd.print(serialIn.substring(serialIn.indexOf("ARTIST:") + 7, serialIn.indexOf("TIME:")));
+
+  lcd.setCursor(12, 1);
+  lcd.print(serialIn.substring(serialIn.indexOf("TIME:") + 5, serialIn.length() - 1));
 }
 void nextUp(String serialIn) {
-  // Displays the track name, artist name and current playback time
+  // Displays the track name, artist name of the song playing next
   lcd.setCursor(0, 0);
   // lcd.autoscroll();
+
+  // Check a name was passed
+  if (serialIn.indexOf("NAME:") == -1) {
+    error(serialIn, "next up NAME = -1");
+  }
+
   lcd.print("Next Up: ");
-  lcd.print("<artist>");
   lcd.setCursor(0, 1);
-  lcd.print("song name");
+  lcd.print(serialIn.substring(serialIn.indexOf("ARTIST:") + 7, serialIn.length() - 1));
+  lcd.print(" - ");
+  lcd.print(serialIn.substring(7, serialIn.indexOf("ARTIST:")));
 }
 
 void error(String serialIn, String error) {
@@ -82,6 +100,7 @@ void error(String serialIn, String error) {
   }
 }
 
+// Main loop - checks mode & calls to display functions
 void loop() {
   if (Serial.available()){
     String serialIn = Serial.readString();
@@ -99,19 +118,15 @@ void loop() {
     // Switch Case for Modes
     switch (mode) {
       case 1:
-        // playing
         nowPlaying(serialIn);
         break;
       case 2:
-        // nextUp
         nextUp(serialIn);
         break;
       case 3:
-        // error
         error(serialIn, "");
         break;
       default:
-        // paused/not playing
         notPlaying(serialIn);
         break;
     }
@@ -119,22 +134,24 @@ void loop() {
 }
 
 /* NOTES:
-Cases:
+Scratch pad:
 1. Nothing playing, serial output : 0, LCD: show time & date
 2. Music playing, serial output: 1 NAME:<songname> ARTIST:<artistname> TIME:<timeplaying>
-3. 30 Secs left of current song, serial output 1: 2 NAME:<songname> - <artistname>, LCD row 0: NEXT UP, row1: Song - Artist Name
-4. 25 secs left of current song, go back to CASE 2
-5. Error with API, serial output: 3 ISSUE:<errorcode>, LCD: show error
+3. 30 Secs left of current song, serial output: 2 NAME:<songname> - <artistname>, LCD row 0: NEXT UP, row1: Song - Artist Name
+4. 25 secs left of current song, go back to CASE 2 (this will be done python side)
+5. Error with API, serial output: 3 ERROR:<errorcode>, LCD: show error
 
 
 MODES:
   1. Nothing playing - 0
-    0
+    0 TIME:<24h time> DATE:<DD/MM/YYYY>
+    0 TIME:12:38 DATE:17/04/2022
   2. Playing - 1
     1 NAME:<songname> ARTIST:<artistname> TIME:<timeplaying>
     1 NAME:Hold It Down ARTIST:Digga D TIME:2:31
   3. Next Up - 2
     2 NAME:<songname> ARTIST:<artistname>
+    2 NAME:2AM ARTIST:Loski
   4. Error - 3
     3 ERROR:<errorcode>
 
