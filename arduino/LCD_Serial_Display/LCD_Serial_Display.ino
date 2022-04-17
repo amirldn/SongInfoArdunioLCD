@@ -57,7 +57,8 @@ void nowPlaying(String serialIn) {
   // lcd.autoscroll();
   Serial.print("index of NAME: ");
   Serial.println(serialIn.indexOf("NAME:"));
-  // Check a name: was given
+
+  // Check a name: was passed
   if (serialIn.indexOf("NAME:") == -1) {
     error(serialIn, "NAME = -1");
   }
@@ -97,7 +98,7 @@ void nextUp(String serialIn) {
 }
 
 void error(String serialIn, String error) {
-  // Displays the track name, artist name and current playback time
+  // Displays when an error occurs (either from Python or Arduino)
   lcd.setCursor(0, 0);
   // lcd.autoscroll();
   lcd.print("ERROR:");
@@ -113,10 +114,6 @@ void error(String serialIn, String error) {
 void loop() {
   if (Serial.available()){
     String serialIn = Serial.readString();
-    // Serial.print("serialIn: ");
-    // Serial.println(serialIn);
-    // Serial.print("serialIn substring'd mode: ");
-    // Serial.println(serialIn.substring(0, 1));
     int mode = serialIn.substring(0, 1).toInt();
     Serial.print("mode: ");
     Serial.println(mode);
@@ -142,15 +139,7 @@ void loop() {
   }
 }
 
-/* NOTES:
-Scratch pad:
-1. Nothing playing, serial output : 0, LCD: show time & date
-2. Music playing, serial output: 1 NAME:<songname> ARTIST:<artistname> TIME:<timeplaying>
-3. 30 Secs left of current song, serial output: 2 NAME:<songname> - <artistname>, LCD row 0: NEXT UP, row1: Song - Artist Name
-4. 25 secs left of current song, go back to CASE 2 (this will be done python side)
-5. Error with API, serial output: 3 ERROR:<errorcode>, LCD: show error
-
-
+/*
 MODES:
   1. Nothing playing - 0
     0 TIME:<24h time> DATE:<DD/MM/YYYY>
@@ -166,8 +155,4 @@ MODES:
 
 TODO:
 1. Figure out why autoscroll does not work (check the length of something and then start printing/adding the chars 1 by 1?)
-2. Make a mode variable and use that for the switch statemenet
-3. Use the indexOf stuff to find out locations of stuff and split it out using substring (from, to)
-
-
 */
