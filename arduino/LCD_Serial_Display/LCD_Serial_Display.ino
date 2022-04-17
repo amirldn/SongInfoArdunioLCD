@@ -65,10 +65,19 @@ void nowPlaying(String serialIn) {
     lcd.print(serialIn.substring(7, serialIn.indexOf("ARTIST:")));
   }
   lcd.setCursor(0, 1);
-  lcd.print(serialIn.substring(serialIn.indexOf("ARTIST:") + 7, serialIn.indexOf("TIME:")));
+  lcd.print(serialIn.substring(serialIn.indexOf("ARTIST:") + 7, serialIn.indexOf("MIN:")));
 
   lcd.setCursor(12, 1);
-  lcd.print(serialIn.substring(serialIn.indexOf("TIME:") + 5, serialIn.length() - 1));
+  lcd.print(serialIn.substring(serialIn.indexOf("MIN:") + 4, serialIn.indexOf("SEC:") - 1));
+  int second = serialIn.substring(serialIn.indexOf("SEC:") + 4, serialIn.length() - 1).toInt();
+  Serial.print(second);
+  if (second % 2 == 0) {
+    lcd.print(":");
+  }
+  else {
+    lcd.print(" ");
+  }
+  lcd.print(second);
 }
 void nextUp(String serialIn) {
   // Displays the track name, artist name of the song playing next
@@ -147,8 +156,8 @@ MODES:
     0 TIME:<24h time> DATE:<DD/MM/YYYY>
     0 TIME:12:38 DATE:17/04/2022
   2. Playing - 1
-    1 NAME:<songname> ARTIST:<artistname> TIME:<timeplaying>
-    1 NAME:Hold It Down ARTIST:Digga D TIME:2:31
+    1 NAME:<songname> ARTIST:<artistname> MIN:<minute> SEC:<second>
+    1 NAME:Hold It Down ARTIST:Digga D MIN:2 SEC:31
   3. Next Up - 2
     2 NAME:<songname> ARTIST:<artistname>
     2 NAME:2AM ARTIST:Loski
