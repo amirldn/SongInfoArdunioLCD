@@ -70,9 +70,8 @@ void nowPlaying(String serialIn) {
 
   lcd.setCursor(12, 1);
   lcd.print(serialIn.substring(serialIn.indexOf("MIN:") + 4, serialIn.indexOf("SEC:") - 1));
-  int second = serialIn.substring(serialIn.indexOf("SEC:") + 4, serialIn.length() - 1).toInt();
-  Serial.print(second);
-  if (second % 2 == 0) {
+  String second = serialIn.substring(serialIn.indexOf("SEC:") + 4, serialIn.length() - 1);
+  if (second.toInt() % 2 == 0) {
     lcd.print(":");
   }
   else {
@@ -146,10 +145,10 @@ MODES:
     0 TIME:12:38 DATE:17/04/2022
   2. Playing - 1
     1 NAME:<songname> ARTIST:<artistname> MIN:<minute> SEC:<second>
-    1 NAME:Hold It Down ARTIST:Digga D MIN:2 SEC:31
+    1 NAME:Hold It Down ARTIST:Digga D MIN:2 SEC:32
   3. Next Up - 2
     2 NAME:<songname> ARTIST:<artistname>
-    2 NAME:2AM ARTIST:Loski
+    2 NAME:Starlight ARTIST:Dave
   4. Error - 3
     3 ERROR:<errorcode>
 
