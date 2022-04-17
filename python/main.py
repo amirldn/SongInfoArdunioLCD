@@ -4,7 +4,7 @@ from spotipy.oauth2 import SpotifyOAuth
 import time
 import json
 
-# export SPOTIPY_CLIENT_ID='3c0c69295bd34f8db54b0ee6ad2f0a1f´®'
+# export SPOTIPY_CLIENT_ID='3c0c69295bd34f8db54b0ee6ad2f0a1f'
 # export SPOTIPY_CLIENT_SECRET='your-spotify-client-secret'
 # export SPOTIPY_REDIRECT_URI='http://localhost/'
 
